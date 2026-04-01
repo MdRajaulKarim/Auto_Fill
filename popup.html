@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lightning Autofill</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>⚡ Lightning Autofill</h1>
+    </header>
+
+    <div class="profile-section">
+      <div class="profile-header">
+        <select id="profileSelect" class="profile-select">
+          <option value="">Select Profile...</option>
+        </select>
+        <button id="fillBtn" class="btn btn-primary" disabled>Fill Form</button>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="addProfileBtn" class="btn btn-secondary">+ Add Profile</button>
+      <button id="editProfileBtn" class="btn btn-secondary" disabled>Edit</button>
+      <button id="deleteProfileBtn" class="btn btn-danger" disabled>Delete</button>
+    </div>
+
+    <div class="actions">
+      <button id="importBtn" class="btn btn-secondary">Import Profiles</button>
+      <button id="exportBtn" class="btn btn-secondary">Export Profiles</button>
+    </div>
+    <input type="file" id="importFile" accept=".json" style="display: none;">
+
+    <div id="profileForm" class="profile-form hidden">
+      <h3 id="formTitle">Add New Profile</h3>
+      
+      <div class="form-group">
+        <label for="profileName">Profile Name</label>
+        <input type="text" id="profileName" placeholder="e.g., Personal Info" required>
+      </div>
+
+      <div class="form-group">
+        <label for="targetSite">Target Site (optional)</label>
+        <input type="text" id="targetSite" placeholder="e.g., example.com">
+      </div>
+
+      <div class="form-group">
+        <label>Fields</label>
+        <div id="fieldsContainer"></div>
+        <button type="button" id="addFieldBtn" class="btn btn-small">+ Add Field</button>
+      </div>
+
+      <div class="form-actions">
+        <button id="saveProfileBtn" class="btn btn-primary">Save Profile</button>
+        <button id="cancelBtn" class="btn btn-secondary">Cancel</button>
+      </div>
+    </div>
+
+    <div class="status" id="status"></div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

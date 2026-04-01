@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+canvas { display: none; }
+</style>
+</head>
+<body>
+<canvas id="icon16" width="16" height="16"></canvas>
+<canvas id="icon48" width="48" height="48"></canvas>
+<canvas id="icon128" width="128" height="128"></canvas>
+
+<script>
+function drawIcon(canvasId, size) {
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext('2d');
+  
+  // Gradient background
+  const gradient = ctx.createLinearGradient(0, 0, size, size);
+  gradient.addColorStop(0, '#667eea');
+  gradient.addColorStop(1, '#764ba2');
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, size, size);
+  
+  // Lightning bolt
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  const scale = size / 16;
+  ctx.moveTo(10 * scale, 2 * scale);
+  ctx.lineTo(6 * scale, 8 * scale);
+  ctx.lineTo(9 * scale, 8 * scale);
+  ctx.lineTo(6 * scale, 14 * scale);
+  ctx.lineTo(10 * scale, 8 * scale);
+  ctx.lineTo(7 * scale, 8 * scale);
+  ctx.closePath();
+  ctx.fill();
+  
+  // Download
+  canvas.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = canvasId + '.png';
+    a.click();
+  });
+}
+
+drawIcon('icon16', 16);
+setTimeout(() => drawIcon('icon48', 48), 100);
+setTimeout(() => drawIcon('icon128', 128), 200);
+</script>
+</body>
+</html>

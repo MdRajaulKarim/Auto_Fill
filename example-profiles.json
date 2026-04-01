@@ -1,0 +1,58 @@
+{
+  "profiles": [
+    {
+      "id": "1706123456789",
+      "profileName": "Example - User Mutation Inheritance",
+      "targetSite": "basundhara.assam.gov.in",
+      "autoFillAll": true,
+      "fields": [
+        {
+          "name": "otp_to_validate",
+          "type": "text",
+          "value": "925964"
+        },
+        {
+          "name": "is_copattadar",
+          "type": "radio",
+          "value": "01"
+        },
+        {
+          "name": "name_eng",
+          "type": "text",
+          "value": "Runa Begum Barbhuiya"
+        },
+        {
+          "name": "name_asm",
+          "type": "text",
+          "value": "কণা বেগম বৰভূঞা"
+        },
+        {
+          "name": "gender",
+          "type": "radio",
+          "value": "010"
+        },
+        {
+          "name": "gurdian_name_eng",
+          "type": "text",
+          "value": "C/O: Abdur Rajak Barbhuiya"
+        },
+        {
+          "name": "gurdian_name_asm",
+          "type": "text",
+          "value": "আব্দুৰ ৰাজাক বৰভূঞা"
+        },
+        {
+          "name": "dob",
+          "type": "text",
+          "value": "1977-10-30"
+        },
+        {
+          "name": "address",
+          "type": "text",
+          "value": "Bowarghat Part 1, Hailakandi, Assam"
+        }
+      ]
+    }
+  ],
+  "currentProfile": "1706123456789"
+}
