@@ -1,4 +1,4 @@
-# ⚡ Lightning Autofill
+# ⚡ Autofill
 
 A Chrome extension for managing multiple autofill profiles and automatically filling web forms.
 
@@ -29,7 +29,7 @@ A Chrome extension for managing multiple autofill profiles and automatically fil
 
 ### Creating a Profile
 
-1. Click the Lightning Autofill icon in your toolbar
+1. Click the Autofill icon in your toolbar
 2. Click "+ Add Profile"
 3. Enter profile details:
    - **Profile Name**: e.g., "Personal Info", "Work Application"
@@ -43,7 +43,7 @@ A Chrome extension for managing multiple autofill profiles and automatically fil
 ### Using a Profile
 
 1. Navigate to the target website
-2. Click the Lightning Autofill icon
+2. Click the Autofill icon
 3. Select your profile from dropdown
 4. Click "Fill Form"
 5. Watch as the form fills automatically!
@@ -152,7 +152,7 @@ Value: United States
 
 Files structure:
 ```
-lightning-autofill/
+autofill/
 ├── manifest.json       # Extension configuration
 ├── popup.html          # UI interface
 ├── popup.js            # Profile management
