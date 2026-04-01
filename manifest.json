@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Lightning Autofill",
+  "name": "Autofill",
   "version": "1.0.0",
   "description": "Multi-profile autofill extension with automatic field detection",
   "permissions": [

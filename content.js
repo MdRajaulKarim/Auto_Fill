@@ -1,11 +1,14 @@
 // Content script for form filling
-console.log('Lightning Autofill content script loaded');
+console.log('Autofill content script loaded');
 
 // Listen for messages from popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'fillForm') {
     fillForm(request.profile);
     sendResponse({ success: true });
+  } else if (request.action === 'captureFields') {
+    const fields = captureAllFormFields();
+    sendResponse({ success: true, fields: fields });
   }
   return true;
 });
@@ -191,14 +194,13 @@ function fillSelectDropdown(name, value) {
 // Show notification on page
 function showNotification(message) {
   // Remove existing notification if any
-  const existing = document.getElementById('lightning-autofill-notification');
+  const existing = document.getElementById('Autofill-notification');
   if (existing) {
     existing.remove();
   }
   
   const notification = document.createElement('div');
-  notification.id = 'lightning-autofill-notification';
-  notification.textContent = message;
+  notification.id = 'Autofill-notification';
   notification.style.cssText = `
     position: fixed;
     top: 20px;
@@ -239,4 +241,144 @@ function showNotification(message) {
     notification.style.opacity = '0';
     setTimeout(() => notification.remove(), 300);
   }, 3000);
+}
+
+// Capture all form fields from the page
+function captureAllFormFields() {
+  const fields = [];
+  const capturedNames = new Set(); // Track all field names to avoid duplicates
+
+  // Search the entire page for all input fields
+  const container = document.body;
+
+  try {
+    // Capture text inputs
+    const textInputs = container.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="password"], input[type="date"], input:not([type])');
+    textInputs.forEach(input => {
+      if (isVisibleElement(input) && input.value) {
+        const fieldName = getFieldName(input);
+        if (fieldName && !capturedNames.has(fieldName)) {
+          capturedNames.add(fieldName);
+          fields.push({
+            name: fieldName,
+            type: 'text',
+            value: input.value
+          });
+        }
+      }
+    });
+
+    // Capture textareas
+    const textareas = container.querySelectorAll('textarea');
+    textareas.forEach(textarea => {
+      if (isVisibleElement(textarea) && textarea.value) {
+        const fieldName = getFieldName(textarea);
+        if (fieldName && !capturedNames.has(fieldName)) {
+          capturedNames.add(fieldName);
+          fields.push({
+            name: fieldName,
+            type: 'text',
+            value: textarea.value
+          });
+        }
+      }
+    });
+
+    // Capture checked checkboxes
+    const checkboxes = container.querySelectorAll('input[type="checkbox"]:checked');
+    checkboxes.forEach(checkbox => {
+      if (isVisibleElement(checkbox)) {
+        const fieldName = getFieldName(checkbox);
+        if (fieldName && !capturedNames.has(fieldName)) {
+          capturedNames.add(fieldName);
+          fields.push({
+            name: fieldName,
+            type: 'checkbox',
+            value: checkbox.value || 'true'
+          });
+        }
+      }
+    });
+
+    // Capture checked radio buttons (one per group)
+    const radios = container.querySelectorAll('input[type="radio"]:checked');
+    radios.forEach(radio => {
+      if (isVisibleElement(radio)) {
+        const fieldName = getFieldName(radio);
+        if (fieldName && !capturedNames.has(fieldName)) {
+          capturedNames.add(fieldName);
+          fields.push({
+            name: fieldName,
+            type: 'radio',
+            value: radio.value
+          });
+        }
+      }
+    });
+
+    // Capture selects
+    const selects = container.querySelectorAll('select');
+    selects.forEach(select => {
+      if (isVisibleElement(select) && select.value) {
+        const fieldName = getFieldName(select);
+        if (fieldName && !capturedNames.has(fieldName)) {
+          capturedNames.add(fieldName);
+          fields.push({
+            name: fieldName,
+            type: 'select',
+            value: select.value
+          });
+        }
+      }
+    });
+
+    console.log(`Captured ${fields.length} form fields`);
+  } catch (error) {
+    console.error('Error capturing form fields:', error);
+  }
+
+  return fields;
+}
+
+// Get field name from element (name > id > placeholder > label)
+function getFieldName(element) {
+  // Check name attribute
+  if (element.name) {
+    return element.name;
+  }
+
+  // Check id attribute
+  if (element.id) {
+    return element.id;
+  }
+
+  // Check placeholder
+  if (element.placeholder) {
+    return element.placeholder;
+  }
+
+  // Check associated label
+  const label = document.querySelector(`label[for="${element.id}"]`);
+  if (label && label.textContent) {
+    return label.textContent.trim();
+  }
+
+  return null;
+}
+
+// Check if element is visible
+function isVisibleElement(element) {
+  // Skip hidden inputs
+  if (element.type === 'hidden') {
+    return false;
+  }
+
+  // Check display and visibility
+  const style = window.getComputedStyle(element);
+  if (style.display === 'none' || style.visibility === 'hidden') {
+    return false;
+  }
+
+  // Check if element is in viewport or has parent form
+  return element.offsetParent !== null || element.parentElement?.tagName === 'FORM';
 }

@@ -51,6 +51,7 @@ function setupEventListeners() {
   document.getElementById('editProfileBtn').addEventListener('click', handleEditProfile);
   document.getElementById('deleteProfileBtn').addEventListener('click', handleDeleteProfile);
   document.getElementById('addFieldBtn').addEventListener('click', addFieldRow);
+  document.getElementById('captureFieldsBtn').addEventListener('click', handleCaptureFields);
   document.getElementById('saveProfileBtn').addEventListener('click', handleSaveProfile);
   document.getElementById('cancelBtn').addEventListener('click', handleCancel);
   document.getElementById('importBtn').addEventListener('click', handleImport);
@@ -106,6 +107,45 @@ function handleAddProfile() {
   document.getElementById('fieldsContainer').innerHTML = '';
   addFieldRow(); // Add one empty field
   document.getElementById('profileForm').classList.remove('hidden');
+}
+
+// Handle capture fields from page
+async function handleCaptureFields() {
+  try {
+    showStatus('Capturing form fields...', '');
+
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+    // Inject content.js if needed
+    await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      files: ['content.js']
+    });
+
+    // Send message to capture fields
+    const response = await chrome.tabs.sendMessage(tab.id, {
+      action: 'captureFields'
+    });
+
+    if (response.success && response.fields && response.fields.length > 0) {
+      populateCapturedFields(response.fields);
+      showStatus(`Captured ${response.fields.length} field(s) from the form!`, 'success');
+    } else {
+      showStatus('No form fields found on this page', 'error');
+    }
+  } catch (error) {
+    showStatus('Error capturing fields: ' + error.message, 'error');
+  }
+}
+
+// Populate form with captured fields
+function populateCapturedFields(fields) {
+  const container = document.getElementById('fieldsContainer');
+  container.innerHTML = '';
+
+  fields.forEach(field => {
+    addFieldRow(field);
+  });
 }
 
 // Handle edit profile
@@ -252,23 +292,32 @@ function handleImport() {
 async function handleImportFile(e) {
   const file = e.target.files[0];
   if (!file) return;
-  
+
   try {
     const text = await file.text();
-    const data = JSON.parse(text);
-    
-    if (!data.profiles || !Array.isArray(data.profiles)) {
-      showStatus('Invalid profile file format', 'error');
-      return;
+    let data;
+
+    // Auto-detect file format
+    if (file.name.endsWith('.csv') || text.includes('### AUTOFILL PROFILES ###')) {
+      // Parse CSV format
+      data = parseCSVProfiles(text);
+    } else {
+      // Parse JSON format
+      data = JSON.parse(text);
+
+      if (!data.profiles || !Array.isArray(data.profiles)) {
+        showStatus('Invalid profile file format', 'error');
+        return;
+      }
     }
-    
+
     // Ask user whether to merge or replace
     const merge = confirm(
       `Import ${data.profiles.length} profile(s).\n\n` +
       'Click OK to MERGE with existing profiles.\n' +
       'Click Cancel to REPLACE all existing profiles.'
     );
-    
+
     if (merge) {
       // Merge profiles (avoid duplicates by ID)
       const existingIds = new Set(profiles.map(p => p.id));
@@ -279,16 +328,186 @@ async function handleImportFile(e) {
       profiles = data.profiles;
       currentProfile = data.currentProfile || null;
     }
-    
+
     await chrome.storage.local.set({ profiles, currentProfile });
     await loadProfiles();
     showStatus('Profiles imported successfully!', 'success');
   } catch (error) {
     showStatus('Error importing profiles: ' + error.message, 'error');
   }
-  
+
   // Reset file input
   e.target.value = '';
+}
+
+// Parse CSV format into profiles
+function parseCSVProfiles(csvText) {
+  try {
+    const lines = csvText.split('\n').map(line => line.trim()).filter(line => line);
+
+    const profilesMap = {};
+    const fieldsMap = {};
+
+    let inProfilesSection = false;
+    let inRulesSection = false;
+    let profileHeaderSkipped = false;
+    let rulesHeaderSkipped = false;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+
+      // Check for section markers
+      if (line.startsWith('### AUTOFILL PROFILES ###')) {
+        inProfilesSection = true;
+        inRulesSection = false;
+        profileHeaderSkipped = false;
+        continue;
+      }
+
+      if (line.startsWith('### AUTOFILL RULES ###')) {
+        inProfilesSection = false;
+        inRulesSection = true;
+        rulesHeaderSkipped = false;
+        continue;
+      }
+
+      // Skip header lines
+      if (inProfilesSection && !profileHeaderSkipped) {
+        if (line.startsWith('Profile ID')) {
+          profileHeaderSkipped = true;
+          continue;
+        }
+      }
+
+      if (inRulesSection && !rulesHeaderSkipped) {
+        if (line.startsWith('Rule ID')) {
+          rulesHeaderSkipped = true;
+          continue;
+        }
+      }
+
+      // Parse profiles
+      if (inProfilesSection && profileHeaderSkipped && line && !line.startsWith('###')) {
+        const parts = parseCSVLine(line);
+        if (parts.length >= 3) {
+          const profileId = parts[0].trim();
+          const profileName = cleanValue(parts[1]);
+          const targetSite = cleanValue(parts[2]);
+
+          if (profileId) {
+            profilesMap[profileId] = {
+              profileName,
+              targetSite,
+              id: profileId
+            };
+          }
+        }
+      }
+
+      // Parse rules (fields)
+      if (inRulesSection && rulesHeaderSkipped && line && !line.startsWith('###')) {
+        const parts = parseCSVLine(line);
+        if (parts.length >= 7) {
+          const ruleId = parts[0].trim();
+          const fieldType = parseInt(parts[1].trim());
+          const fieldName = cleanFieldName(parts[2]);
+          const fieldValue = cleanValue(parts[3]);
+          const profileId = parts[6].trim();
+
+          if (profileId && fieldName && fieldValue !== null) {
+            if (!fieldsMap[profileId]) {
+              fieldsMap[profileId] = [];
+            }
+
+            // Convert type numbers to strings
+            const typeMap = { 0: 'text', 1: 'checkbox', 2: 'select', 3: 'radio' };
+            const fieldTypeStr = typeMap[fieldType] || 'text';
+
+            fieldsMap[profileId].push({
+              name: fieldName,
+              type: fieldTypeStr,
+              value: fieldValue
+            });
+          }
+        }
+      }
+    }
+
+    // Build profiles array
+    const profiles = [];
+    for (const profileId in profilesMap) {
+      const profile = profilesMap[profileId];
+      const fields = fieldsMap[profileId] || [];
+
+      profiles.push({
+        id: profile.id,
+        profileName: profile.profileName,
+        targetSite: profile.targetSite,
+        autoFillAll: true,
+        fields: fields
+      });
+    }
+
+    if (profiles.length === 0) {
+      throw new Error('No profiles found in CSV file');
+    }
+
+    return {
+      profiles,
+      currentProfile: null
+    };
+  } catch (error) {
+    throw new Error(`Error parsing CSV: ${error.message}`);
+  }
+}
+
+// Parse CSV line respecting quoted values
+function parseCSVLine(line) {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    const nextChar = line[i + 1];
+
+    if (char === '"') {
+      if (inQuotes && nextChar === '"') {
+        current += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (char === ',' && !inQuotes) {
+      result.push(current);
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+
+  result.push(current);
+  return result;
+}
+
+// Clean field name by removing triple quotes
+function cleanFieldName(fieldName) {
+  // Remove triple quotes: """name""" -> name
+  let cleaned = fieldName.replace(/^"""/, '').replace(/"""$/, '');
+  // Remove any remaining quotes
+  cleaned = cleaned.replace(/^"/, '').replace(/"$/, '');
+  return cleaned.trim();
+}
+
+// Clean CSV value (remove surrounding quotes)
+function cleanValue(value) {
+  let cleaned = value.trim();
+  // Remove leading and trailing quotes
+  if ((cleaned.startsWith('"') && cleaned.endsWith('"')) ||
+      (cleaned.startsWith("'") && cleaned.endsWith("'"))) {
+    cleaned = cleaned.slice(1, -1);
+  }
+  return cleaned;
 }
 
 // Handle export profiles
@@ -309,7 +528,7 @@ function handleExport() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `lightning-autofill-profiles-${Date.now()}.json`;
+  a.download = `autofill-profiles-${Date.now()}.json`;
   a.click();
   URL.revokeObjectURL(url);
   
