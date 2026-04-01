@@ -14,7 +14,7 @@ async function loadProfiles() {
   const result = await chrome.storage.local.get(['profiles', 'currentProfile']);
   profiles = result.profiles || [];
   currentProfile = result.currentProfile || null;
-  
+
   populateProfileSelect();
   updateButtons();
 }
@@ -23,7 +23,7 @@ async function loadProfiles() {
 function populateProfileSelect() {
   const select = document.getElementById('profileSelect');
   select.innerHTML = '<option value="">Select Profile...</option>';
-  
+
   profiles.forEach(profile => {
     const option = document.createElement('option');
     option.value = profile.id;
@@ -72,26 +72,26 @@ async function handleFillForm() {
     showStatus('Please select a profile', 'error');
     return;
   }
-  
+
   const profile = profiles.find(p => p.id === currentProfile);
   if (!profile) {
     showStatus('Profile not found', 'error');
     return;
   }
-  
+
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    
+
     await chrome.scripting.executeScript({
       target: { tabId: tab.id },
       files: ['content.js']
     });
-    
+
     await chrome.tabs.sendMessage(tab.id, {
       action: 'fillForm',
       profile: profile
     });
-    
+
     showStatus('Form filled successfully!', 'success');
   } catch (error) {
     showStatus('Error filling form: ' + error.message, 'error');
@@ -151,34 +151,34 @@ function populateCapturedFields(fields) {
 // Handle edit profile
 function handleEditProfile() {
   if (!currentProfile) return;
-  
+
   const profile = profiles.find(p => p.id === currentProfile);
   if (!profile) return;
-  
+
   editingProfileId = profile.id;
   document.getElementById('formTitle').textContent = 'Edit Profile';
   document.getElementById('profileName').value = profile.profileName;
   document.getElementById('targetSite').value = profile.targetSite || '';
-  
+
   const container = document.getElementById('fieldsContainer');
   container.innerHTML = '';
-  
+
   profile.fields.forEach(field => {
     addFieldRow(field);
   });
-  
+
   document.getElementById('profileForm').classList.remove('hidden');
 }
 
 // Handle delete profile
 async function handleDeleteProfile() {
   if (!currentProfile) return;
-  
+
   if (!confirm('Are you sure you want to delete this profile?')) return;
-  
+
   profiles = profiles.filter(p => p.id !== currentProfile);
   currentProfile = null;
-  
+
   await chrome.storage.local.set({ profiles, currentProfile });
   await loadProfiles();
   showStatus('Profile deleted successfully', 'success');
@@ -189,7 +189,7 @@ function addFieldRow(field = null) {
   const container = document.getElementById('fieldsContainer');
   const fieldRow = document.createElement('div');
   fieldRow.className = 'field-row';
-  
+
   fieldRow.innerHTML = `
     <input type="text" class="field-name" placeholder="Field name (e.g., email)" 
            value="${field ? field.name : ''}" required>
@@ -203,45 +203,48 @@ function addFieldRow(field = null) {
     <input type="text" class="field-value" placeholder="Value" 
            value="${field ? field.value : ''}" required>
   `;
-  
+
   fieldRow.querySelector('.remove-field').addEventListener('click', () => {
     fieldRow.remove();
   });
-  
+
   container.appendChild(fieldRow);
+
+  // Auto-scroll to new field
+  fieldRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 // Handle save profile
 async function handleSaveProfile() {
   const profileName = document.getElementById('profileName').value.trim();
   const targetSite = document.getElementById('targetSite').value.trim();
-  
+
   if (!profileName) {
     showStatus('Please enter a profile name', 'error');
     return;
   }
-  
+
   const fieldRows = document.querySelectorAll('.field-row');
   const fields = [];
-  
+
   for (const row of fieldRows) {
     const name = row.querySelector('.field-name').value.trim();
     const type = row.querySelector('.field-type').value;
     const value = row.querySelector('.field-value').value.trim();
-    
+
     if (!name || !value) {
       showStatus('All fields must have a name and value', 'error');
       return;
     }
-    
+
     fields.push({ name, type, value });
   }
-  
+
   if (fields.length === 0) {
     showStatus('Please add at least one field', 'error');
     return;
   }
-  
+
   const profile = {
     id: editingProfileId || Date.now().toString(),
     profileName,
@@ -249,7 +252,7 @@ async function handleSaveProfile() {
     autoFillAll: true,
     fields
   };
-  
+
   if (editingProfileId) {
     // Update existing profile
     const index = profiles.findIndex(p => p.id === editingProfileId);
@@ -258,7 +261,7 @@ async function handleSaveProfile() {
     // Add new profile
     profiles.push(profile);
   }
-  
+
   await chrome.storage.local.set({ profiles });
   await loadProfiles();
   handleCancel();
@@ -276,7 +279,7 @@ function showStatus(message, type) {
   const status = document.getElementById('status');
   status.textContent = message;
   status.className = 'status ' + type;
-  
+
   setTimeout(() => {
     status.className = 'status';
     status.textContent = '';
@@ -504,7 +507,7 @@ function cleanValue(value) {
   let cleaned = value.trim();
   // Remove leading and trailing quotes
   if ((cleaned.startsWith('"') && cleaned.endsWith('"')) ||
-      (cleaned.startsWith("'") && cleaned.endsWith("'"))) {
+    (cleaned.startsWith("'") && cleaned.endsWith("'"))) {
     cleaned = cleaned.slice(1, -1);
   }
   return cleaned;
@@ -516,14 +519,14 @@ function handleExport() {
     showStatus('No profiles to export', 'error');
     return;
   }
-  
+
   const data = {
     profiles,
     currentProfile,
     exportedAt: new Date().toISOString(),
     version: '1.0.0'
   };
-  
+
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -531,7 +534,7 @@ function handleExport() {
   a.download = `autofill-profiles-${Date.now()}.json`;
   a.click();
   URL.revokeObjectURL(url);
-  
+
   showStatus('Profiles exported successfully!', 'success');
 }
 

@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Autofill</title>
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
   <div class="container">
     <header>
@@ -35,7 +37,7 @@
 
     <div id="profileForm" class="profile-form hidden">
       <h3 id="formTitle">Add New Profile</h3>
-      
+
       <div class="form-group">
         <label for="profileName">Profile Name</label>
         <input type="text" id="profileName" placeholder="e.g., Personal Info" required>
@@ -48,11 +50,12 @@
 
       <div class="form-group">
         <label>Fields</label>
-        <div id="fieldsContainer"></div>
         <div style="display: flex; gap: 8px;">
-          <button type="button" id="captureFieldsBtn" class="btn btn-small" style="flex: 1;">🎯 Capture from Page</button>
+          <button type="button" id="captureFieldsBtn" class="btn btn-small" style="flex: 1;">🎯 Capture from
+            Page</button>
           <button type="button" id="addFieldBtn" class="btn btn-small" style="flex: 1;">+ Add Field</button>
         </div>
+        <div id="fieldsContainer"></div>
       </div>
 
       <div class="form-actions">
@@ -66,4 +69,5 @@
 
   <script src="popup.js"></script>
 </body>
+
 </html>

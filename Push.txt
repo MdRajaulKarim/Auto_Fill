@@ -20,5 +20,5 @@ git push origin main
 git status
 git pull origin main --rebase
 git add .
-git commit -m "Solved all errors and fixed all layout issues"
+git commit -m ""All codes farmatted neatly""
 git push origin main
