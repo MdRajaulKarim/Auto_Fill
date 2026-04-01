@@ -529,8 +529,10 @@ function handleExport() {
   const a = document.createElement('a');
   a.href = url;
   a.download = `autofill-profiles-${Date.now()}.json`;
+  document.body.appendChild(a);
   a.click();
-  URL.revokeObjectURL(url);
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 100);
   
   showStatus('Profiles exported successfully!', 'success');
 }
