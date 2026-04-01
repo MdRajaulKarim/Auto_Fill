@@ -1,0 +1,321 @@
+/* ============================================================
+   Auto Fill – shared stylesheet for popup and options pages
+   ============================================================ */
+
+/* ── Reset / base ───────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  color: #1a1a2e;
+  background: #f4f6fb;
+}
+
+/* ── Colours ────────────────────────────────────────────────── */
+:root {
+  --primary:   #4361ee;
+  --primary-h: #3a56d4;
+  --danger:    #ef233c;
+  --danger-h:  #d90429;
+  --secondary: #6c757d;
+  --secondary-h: #5a6268;
+  --success:   #2dc653;
+  --border:    #d0d7e2;
+  --bg-card:   #ffffff;
+  --text-muted:#6b7280;
+}
+
+/* ── Buttons ────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+  white-space: nowrap;
+}
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-primary   { background: var(--primary);   color: #fff; }
+.btn-primary:hover:not(:disabled) { background: var(--primary-h); }
+
+.btn-secondary { background: var(--secondary); color: #fff; }
+.btn-secondary:hover:not(:disabled) { background: var(--secondary-h); }
+
+.btn-danger    { background: var(--danger);    color: #fff; }
+.btn-danger:hover:not(:disabled) { background: var(--danger-h); }
+
+.btn-block { width: 100%; }
+.btn-sm    { padding: 5px 10px; font-size: 12px; }
+.btn-icon  { padding: 4px 8px; font-size: 13px; line-height: 1; }
+
+/* ── Form elements ──────────────────────────────────────────── */
+.field-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 5px;
+  font-size: 13px;
+}
+.field-label-sm {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.field-input,
+.field-select {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  background: #fff;
+  color: #1a1a2e;
+  transition: border-color 0.15s;
+}
+.field-input:focus,
+.field-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.12);
+}
+
+.help-text {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.required { color: var(--danger); }
+
+/* ── Status messages ────────────────────────────────────────── */
+.status-msg       { min-height: 18px; font-size: 12px; margin-top: 6px; }
+.status-success   { color: var(--success); }
+.status-error     { color: var(--danger); }
+
+/* ══════════════════════════════════════════════════════════════
+   POPUP
+   ══════════════════════════════════════════════════════════════ */
+
+.popup-body {
+  width: 280px;
+  padding: 12px;
+  background: var(--bg-card);
+}
+
+.popup-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.popup-logo {
+  width: 28px;
+  height: 28px;
+}
+
+.popup-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.popup-section {
+  margin-bottom: 10px;
+}
+
+.info-text {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.popup-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.popup-actions .btn { flex: 1; }
+
+/* ══════════════════════════════════════════════════════════════
+   OPTIONS
+   ══════════════════════════════════════════════════════════════ */
+
+.options-body {
+  min-height: 100vh;
+  padding: 0;
+}
+
+.options-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.options-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.options-logo {
+  width: 36px;
+  height: 36px;
+}
+
+.options-header h1 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+/* Layout */
+.options-layout {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+/* Sidebar */
+.profile-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.sidebar-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.profile-list {
+  list-style: none;
+  margin-bottom: 14px;
+}
+
+.profile-list-item {
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #333;
+  margin-bottom: 4px;
+  transition: background 0.12s;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.profile-list-item:hover   { background: #eef1fb; }
+.profile-list-item.active  { background: #dde4ff; color: var(--primary); font-weight: 700; }
+
+/* Editor main area */
+.profile-editor {
+  flex: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px;
+  min-height: 300px;
+}
+
+.no-selection-msg {
+  color: var(--text-muted);
+  font-size: 14px;
+  padding: 20px 0;
+}
+
+.editor-title {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #1a1a2e;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+/* Fields */
+.fields-section {
+  margin-top: 24px;
+}
+
+.fields-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.fields-title {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.fields-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.field-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fafbff;
+}
+
+.field-row-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr 120px 1fr;
+  gap: 8px;
+  flex: 1;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Editor actions */
+.editor-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+/* Responsive: stack on small screens */
+@media (max-width: 680px) {
+  .options-layout { flex-direction: column; }
+  .profile-sidebar { width: 100%; }
+  .field-row-inputs { grid-template-columns: 1fr 1fr; }
+}

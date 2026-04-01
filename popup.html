@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Auto Fill</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="popup-body">
+  <header class="popup-header">
+    <img src="icons/icon48.png" alt="Auto Fill" class="popup-logo" />
+    <h1 class="popup-title">Auto Fill</h1>
+  </header>
+
+  <section class="popup-section">
+    <label for="profileSelect" class="field-label">Active Profile</label>
+    <select id="profileSelect" class="field-select"></select>
+  </section>
+
+  <section class="popup-section" id="profileInfo">
+    <p class="info-text" id="siteInfo"></p>
+    <p class="info-text" id="fieldCount"></p>
+  </section>
+
+  <div class="popup-actions">
+    <button id="fillBtn" class="btn btn-primary" disabled>▶ Fill Form</button>
+    <button id="optionsBtn" class="btn btn-secondary">⚙ Manage Profiles</button>
+  </div>
+
+  <p id="statusMsg" class="status-msg"></p>
+
+  <script src="popup.js"></script>
+</body>
+</html>

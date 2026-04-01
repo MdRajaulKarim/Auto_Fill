@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Auto Fill – Manage Profiles</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="options-body">
+  <div class="options-container">
+    <header class="options-header">
+      <img src="icons/icon48.png" alt="Auto Fill" class="options-logo" />
+      <h1>Auto Fill – Profile Manager</h1>
+    </header>
+
+    <!-- ======= Profile list sidebar ======= -->
+    <div class="options-layout">
+      <aside class="profile-sidebar">
+        <h2 class="sidebar-title">Profiles</h2>
+        <ul id="profileList" class="profile-list"></ul>
+        <button id="addProfileBtn" class="btn btn-primary btn-block">+ New Profile</button>
+      </aside>
+
+      <!-- ======= Profile editor ======= -->
+      <main class="profile-editor" id="profileEditor">
+        <p class="no-selection-msg">Select a profile on the left, or create a new one.</p>
+      </main>
+    </div>
+  </div>
+
+  <!-- ======= Profile editor template (hidden) ======= -->
+  <template id="editorTemplate">
+    <section class="editor-section">
+      <h2 class="editor-title" id="editorHeading">Edit Profile</h2>
+
+      <div class="form-group">
+        <label class="field-label" for="profileName">Profile Name <span class="required">*</span></label>
+        <input type="text" id="profileName" class="field-input" placeholder="e.g. Work Form" />
+      </div>
+
+      <div class="form-group">
+        <label class="field-label" for="targetSite">Target Site</label>
+        <input type="text" id="targetSite" class="field-input" placeholder="e.g. example.com or *.example.com" />
+        <small class="help-text">Leave blank to apply on all sites. Supports * wildcard.</small>
+      </div>
+
+      <div class="form-group">
+        <label class="field-label" for="fillMode">Fill Mode</label>
+        <select id="fillMode" class="field-select">
+          <option value="overwrite">Overwrite (default)</option>
+          <option value="no-overwrite">No-overwrite (skip if already filled)</option>
+        </select>
+      </div>
+
+      <!-- Fields table -->
+      <div class="fields-section">
+        <div class="fields-header">
+          <h3 class="fields-title">Fields</h3>
+          <button id="addFieldBtn" class="btn btn-secondary btn-sm">+ Add Field</button>
+        </div>
+        <div id="fieldsContainer" class="fields-container"></div>
+      </div>
+
+      <div class="editor-actions">
+        <button id="saveProfileBtn" class="btn btn-primary">Save Profile</button>
+        <button id="deleteProfileBtn" class="btn btn-danger">Delete Profile</button>
+      </div>
+      <p id="editorStatus" class="status-msg"></p>
+    </section>
+  </template>
+
+  <!-- ======= Field row template (hidden) ======= -->
+  <template id="fieldRowTemplate">
+    <div class="field-row">
+      <div class="field-row-inputs">
+        <div class="field-group">
+          <label class="field-label-sm">Field Key (name / id / label text)</label>
+          <input type="text" class="field-input field-key" placeholder="e.g. email or #email-input" />
+        </div>
+        <div class="field-group">
+          <label class="field-label-sm">CSS Selector (optional)</label>
+          <input type="text" class="field-input field-selector" placeholder="e.g. #myForm input[name='email']" />
+        </div>
+        <div class="field-group">
+          <label class="field-label-sm">Type</label>
+          <select class="field-select field-type">
+            <option value="text">Text</option>
+            <option value="email">Email</option>
+            <option value="tel">Phone</option>
+            <option value="number">Number</option>
+            <option value="textarea">Textarea</option>
+            <option value="radio">Radio</option>
+            <option value="checkbox">Checkbox</option>
+            <option value="select">Dropdown / Select</option>
+            <option value="date">Date</option>
+            <option value="url">URL</option>
+            <option value="password">Password</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label-sm">Fill Value</label>
+          <input type="text" class="field-input field-value" placeholder="Value to fill" />
+        </div>
+      </div>
+      <button class="btn btn-danger btn-icon remove-field-btn" title="Remove field">✕</button>
+    </div>
+  </template>
+
+  <script src="options.js"></script>
+</body>
+</html>
