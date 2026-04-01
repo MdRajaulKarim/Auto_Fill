@@ -17,5 +17,8 @@ git add .
 git commit -m "Fix layout issue and update JS validation"
 git push origin main
 
-
+git status
+git pull origin main --rebase
+git add .
 git commit -m "Solved all errors and fixed all layout issues"
+git push origin main
