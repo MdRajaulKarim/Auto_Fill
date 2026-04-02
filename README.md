@@ -5,10 +5,12 @@ A Chrome extension for managing multiple autofill profiles and automatically fil
 ## Features
 
 - **Multiple Profiles**: Create and manage unlimited autofill profiles
+- **Auto-Capture** 🎯: Automatically capture form fields directly from webpages
 - **Auto-Detection**: Automatically detects and fills form fields by name/id
 - **Field Types Support**: Text, radio buttons, checkboxes, and select dropdowns
 - **Profile Switching**: Easy profile selection from popup
 - **Visual Feedback**: On-page notification when forms are filled
+- **Import/Export**: Save and restore profiles as JSON or CSV files
 
 ## Installation
 
@@ -34,10 +36,20 @@ A Chrome extension for managing multiple autofill profiles and automatically fil
 3. Enter profile details:
    - **Profile Name**: e.g., "Personal Info", "Work Application"
    - **Target Site**: (optional) e.g., "example.com"
-4. Add fields:
-   - **Field Name**: The HTML `name` or `id` attribute (e.g., "email", "first_name")
-   - **Type**: Select field type (Text, Radio, Checkbox, Select)
-   - **Value**: The value to fill
+4. Add fields using one of two methods:
+
+   **Method A: Auto-Capture Fields** (Recommended)
+   - Visit a webpage with the form you want to fill
+   - Click "🎯 Capture from Page"
+   - The extension automatically detects and lists all form fields
+   - Field names, types, and values are auto-populated
+   - Edit or remove any fields before saving
+
+   **Method B: Manual Entry**
+   - Click "+ Add Field"
+   - Enter **Field Name**: The HTML `name` or `id` attribute (e.g., "email", "first_name")
+   - Select **Type**: Text, Radio, Checkbox, or Select
+   - Enter **Value**: The value to fill
 5. Click "Save Profile"
 
 ### Using a Profile
@@ -48,6 +60,18 @@ A Chrome extension for managing multiple autofill profiles and automatically fil
 4. Click "Fill Form"
 5. Watch as the form fills automatically!
 
+### Quick Start with Auto-Capture
+
+**For forms you want to fill often:**
+
+1. Fill the form manually with your information
+2. Open the extension → Click "+ Add Profile"
+3. Enter a profile name (e.g., "My Info")
+4. Click "🎯 Capture from Page" (while the filled form is visible)
+5. Review the auto-captured fields
+6. Click "Save Profile"
+7. Next time, just open the extension → Select profile → Click "Fill Form"
+
 ### Managing Profiles
 
 - **Edit**: Select profile → Click "Edit" → Make changes → Save
@@ -56,9 +80,22 @@ A Chrome extension for managing multiple autofill profiles and automatically fil
 
 ## Field Detection
 
+### Auto-Capture Mode
+When you click "🎯 Capture from Page", the extension:
+1. Scans the first form on the webpage
+2. Detects all form fields (text inputs, textareas, checkboxes, radio buttons, select dropdowns)
+3. Auto-identifies field types based on HTML attributes
+4. Extracts field names using this priority:
+   - HTML `name` attribute
+   - HTML `id` attribute
+   - `placeholder` text
+   - Associated `<label>` text
+5. Captures current values from the page (for pre-filled forms)
+
+### Manual Field Detection
 The extension finds fields in this order:
 1. Exact match on `name` attribute
-2. Exact match on `id` attribute  
+2. Exact match on `id` attribute
 3. Partial match on `name` attribute (contains)
 4. Check textarea and select elements
 
