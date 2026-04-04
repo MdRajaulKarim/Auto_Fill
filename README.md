@@ -15,17 +15,17 @@ A Chrome extension for managing multiple autofill profiles and automatically fil
 ## Installation
 
 1. **Download the Extension**
-   - Download all files to a folder (e.g., `lightning-autofill`)
+   - Download all files to a folder (e.g., `auto_fill`)
 
 2. **Load in Chrome**
    - Open Chrome and go to `chrome://extensions/`
    - Enable "Developer mode" (toggle in top-right corner)
    - Click "Load unpacked"
-   - Select the `lightning-autofill` folder
+   - Select the `auto_fill` folder
 
 3. **Pin the Extension**
    - Click the puzzle icon in Chrome toolbar
-   - Find "Lightning Autofill" and pin it
+   - Find "Autofill" and pin it
 
 ## Usage
 
@@ -155,12 +155,12 @@ Value: United States
 **Fields**:
 | Field Name | Type | Value |
 |------------|------|-------|
-| first_name | Text | John |
+| first_name | Text |  |
 | last_name | Text | Doe |
-| email | Text | john@example.com |
-| phone | Text | +1234567890 |
+| email | Text | xyz@gmail.com |
+| phone | Text | +91 00000 00000 |
 | gender | Radio | male |
-| country | Select | United States |
+| country | Select | India |
 | agree_terms | Checkbox | true |
 
 ## Tips
